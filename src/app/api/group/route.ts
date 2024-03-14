@@ -30,8 +30,9 @@ export const GET = async () => {
   }
 };
 
-export const POST = async (request: Request) => {
-  const formData = await request.formData();
+export const POST = async (res: Request) => {
+  const formData = await res.formData();
+  console.log(formData)
   const name = formData.get("name") as string;
   const introduction = (formData.get("introduction") as string) || null;
   const image = (formData.get("image") as File) || null;
