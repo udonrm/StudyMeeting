@@ -1,6 +1,10 @@
+import Form from "./components/group/form";
 import { auth } from "./utils/auth";
 
 export default async function Home() {
-  const session = await auth();
-  return;
+  return (
+    <>
+      <Form />
+    </>
+  );
 }
