@@ -1,5 +1,6 @@
 "use server";
-export async function EditGroup(formData: FormData) {
+
+export async function EditGroup(prevState: any, formData: FormData) {
   const group = {
     id: formData.get("id"),
     name: formData.get("name"),
@@ -11,5 +12,5 @@ export async function EditGroup(formData: FormData) {
     body: formData,
   });
   const data = await res.json();
-  return <div>editGroup</div>;
+  return data;
 }

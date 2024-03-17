@@ -4,7 +4,6 @@ import { stat, mkdir, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import _ from "lodash";
 import { PrismaClient } from "@prisma/client";
-import { request } from "http";
 
 const prisma = new PrismaClient();
 
@@ -33,10 +32,10 @@ export const GET = async () => {
 
 export const POST = async (request: Request) => {
   const formData = await request.formData();
-  console.log(formData)
   const name = formData.get("name") as string;
   const introduction = (formData.get("introduction") as string) || null;
   const image = (formData.get("image") as File) || null;
+  console.log(image);
 
   const buffer = Buffer.from(await image.arrayBuffer());
   const relativeUploadDir = `/uploads/${new Date(Date.now())
