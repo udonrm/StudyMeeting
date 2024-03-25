@@ -8,3 +8,7 @@ export type group = {
 export type groupObjType = {
   groupObj: group;
 };
+
+export type Params = {
+  id: number;
+};

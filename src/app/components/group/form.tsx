@@ -6,14 +6,13 @@ const Form = () => {
       image: formData.get("image"),
       introduction: formData.get("introduction"),
     };
-    console.log(groupObject);
 
     const res = await fetch(`http://localhost:3000/api/group`, {
       method: "POST",
       // headers: {
       //   "Content-Type": "multipart/form-data",
       // },
-      body: formData
+      body: formData,
     });
   };
 

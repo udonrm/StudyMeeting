@@ -12,10 +12,7 @@ export function EditForm({ groupObj }: groupObjType) {
     introduction: groupObj.introduction,
   };
 
-  console.log(initialState.image);
-
   const [FormState, formAction] = useFormState(EditGroup, initialState);
-  console.log(FormState);
 
   return (
     <>

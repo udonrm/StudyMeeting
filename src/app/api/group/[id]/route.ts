@@ -5,15 +5,13 @@ import { NextResponse, NextRequest } from "next/server";
 import _ from "lodash";
 import { PrismaClient } from "@prisma/client";
 import { main } from "../route";
+import { Params } from "@/types";
 
 const prisma = new PrismaClient();
 
-export const GET = async (
-  request: Request,
-  { params }: { params: { id: number } }
-) => {
+export const GET = async (request: Request, context: { params: Params }) => {
   try {
-    const id = Number(params.id);
+    const id = Number(context.params.id);
     await main();
     const group = await prisma.group.findUnique({
       where: { id },
@@ -83,6 +81,23 @@ export const PATCH = async (
     return NextResponse.json({ message: "Success", group }, { status: 200 });
   } catch (e) {
     return NextResponse.json({ message: "Error", e }, { status: 500 });
+  } finally {
+    await prisma.$disconnect;
+  }
+};
+
+export const DELETE = async (request: Request, context: { params: Params }) => {
+  try {
+    const id = Number(context.params.id);
+    await main();
+    const group = await prisma.$transaction([
+      prisma.group.delete({
+        where: { id },
+      }),
+    ]);
+    return NextResponse.json({ message: "Success", group }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
   } finally {
     await prisma.$disconnect;
   }
