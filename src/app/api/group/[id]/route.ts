@@ -1,27 +1,23 @@
 import mime from "mime";
 import { join } from "path";
 import { stat, mkdir, writeFile } from "fs/promises";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import _ from "lodash";
 import { PrismaClient } from "@prisma/client";
-import { revalidateTag } from "next/cache";
+import { main } from "../route";
+import { Params } from "@/types";
 
 const prisma = new PrismaClient();
 
-export const main = async () => {
+export const GET = async (request: Request, context: { params: Params }) => {
   try {
-    await prisma.$connect();
-  } catch (e) {
-    return Error("DB接続に失敗しました");
-  }
-};
-
-export const GET = async () => {
-  try {
+    const id = Number(context.params.id);
     await main();
-    const groups = await prisma.group.findMany();
+    const group = await prisma.group.findUnique({
+      where: { id },
+    });
     return NextResponse.json(
-      { message: "success", groups: groups },
+      { message: "success", group: group },
       { status: 200 }
     );
   } catch (e) {
@@ -31,12 +27,14 @@ export const GET = async () => {
   }
 };
 
-export const POST = async (request: Request) => {
+export const PATCH = async (
+  request: Request,
+  { params }: { params: { id: number } }
+) => {
   const formData = await request.formData();
   const name = formData.get("name") as string;
   const introduction = (formData.get("introduction") as string) || null;
   const image = (formData.get("image") as File) || null;
-
   const buffer = Buffer.from(await image.arrayBuffer());
   const relativeUploadDir = `/uploads/${new Date(Date.now())
     .toLocaleDateString("ja-JP", {
@@ -66,7 +64,7 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    // Math.random()で出力される0から1未満の数と1e9(1 * 10の9乗)の積でMath.round()で四捨五入
+    const id: number = Number(params.id);
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const filename = `${image.name.replace(
       /\.[^/.]+$/,
@@ -76,12 +74,30 @@ export const POST = async (request: Request) => {
     const fileUrl = `${relativeUploadDir}/${filename}`;
 
     await main();
-    const group = await prisma.group.create({
+    const group = await prisma.group.update({
       data: { name, image: fileUrl, introduction },
+      where: { id },
     });
-    return NextResponse.json({ message: "success", group }, { status: 201 });
+    return NextResponse.json({ message: "Success", group }, { status: 200 });
   } catch (e) {
     return NextResponse.json({ message: "Error", e }, { status: 500 });
+  } finally {
+    await prisma.$disconnect;
+  }
+};
+
+export const DELETE = async (request: Request, context: { params: Params }) => {
+  try {
+    const id = Number(context.params.id);
+    await main();
+    const group = await prisma.$transaction([
+      prisma.group.delete({
+        where: { id },
+      }),
+    ]);
+    return NextResponse.json({ message: "Success", group }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
   } finally {
     await prisma.$disconnect;
   }

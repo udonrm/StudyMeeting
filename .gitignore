@@ -37,3 +37,6 @@ next-env.d.ts
 
 compose.yaml
 Dockerfile
+
+prisma/dev.db
+public/uploads

@@ -1,4 +1,4 @@
-const Form = () => {
+const CreateForm = () => {
   const createGroup = async (formData: FormData) => {
     "use server";
     const groupObject = {
@@ -9,9 +9,6 @@ const Form = () => {
 
     const res = await fetch(`http://localhost:3000/api/group`, {
       method: "POST",
-      // headers: {
-      //   "Content-Type": "multipart/form-data",
-      // },
       body: formData,
     });
   };
@@ -28,4 +25,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default CreateForm;
