@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
+
 export async function EditGroup(prevState: any, formData: FormData) {
   const group = {
     id: formData.get("id"),
@@ -12,5 +14,6 @@ export async function EditGroup(prevState: any, formData: FormData) {
     body: formData,
   });
   const data = await res.json();
+  revalidateTag('groups/${group.id}/edit')
   return data;
 }
