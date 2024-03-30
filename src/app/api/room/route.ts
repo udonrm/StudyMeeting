@@ -7,15 +7,15 @@ const prisma = new PrismaClient();
 export const GET = async () => {
     try {
         await main();
-        const groupUsers = await prisma.$transaction([
-            prisma.groupUser.findMany(),
+        const rooms = await prisma.$transaction([
+            prisma.room.findMany()
         ]);
         return NextResponse.json(
-            { message: "success", groupUsers: groupUsers },
+            { message: "success", rooms: rooms },
             { status: 200 }
         );
     } catch (e) {
-        return NextResponse.json({ message: "error", e }, { status: 500 })
+        return NextResponse.json({ message: "error", e }, { status: 500 });
     } finally {
         await prisma.$disconnect;
     }
@@ -23,18 +23,18 @@ export const GET = async () => {
 
 export const POST = async (request: Request) => {
     // const formData = await request.formData();
-    // const userId = formData.get("userId") as string;
-    // const groupId = Number(formData.get("groupId"));
-    const userId = "clu702ta30000kb72e4ivripm";
+    // const name = formData.get("name") as string;
+    // const groupId = Number(formData.get("groupId")); 
+    const name = "tttt"
     const groupId = 2
     try {
         await main();
-        const groupUser = await prisma.$transaction([
-            prisma.groupUser.create({
-                data: { userId: userId, groupId: groupId }
+        const room = await prisma.$transaction([
+            prisma.room.create({
+                data: { name: name, groupId: groupId }
             }),
         ]);
-        return NextResponse.json({ message: "success", groupUser: groupUser }, { status: 200 });
+        return NextResponse.json({ message: "success", room: room }, { status: 200 });
     } catch (e) {
         return NextResponse.json({ message: "error", e }, { status: 500 });
     } finally {

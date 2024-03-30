@@ -7,22 +7,19 @@ const prisma = new PrismaClient();
 
 export const GET = async (request: Request, context: { params: Params }) => {
     try {
-        const id = String(context.params.id);
+        const id = Number(context.params.id);
         await main();
-        const user = await prisma.$transaction([
-            prisma.user.findUnique({
+        const room = await prisma.$transaction([
+            prisma.room.findUniqueOrThrow({
                 where: { id },
-                include: {
-                    groupUsers: true,
-                }
             }),
         ]);
         return NextResponse.json(
-            { message: "success", user: user },
+            { message: "success", room: room },
             { status: 200 }
         );
     } catch (e) {
-        return NextResponse.json({ message: "error", e }, { status: 500 })
+        return NextResponse.json({ message: "error", e }, { status: 500 });
     } finally {
         await prisma.$disconnect;
     }
@@ -30,24 +27,27 @@ export const GET = async (request: Request, context: { params: Params }) => {
 
 export const PATCH = async (request: Request, context: { params: Params }) => {
     try {
-        const id = String(context.params.id);
-        const { name, introduction, email, image } = await request.json();
+        // const id = context.params.id;
+        // const { name, groupId } = await request.json();
+        const id = 1
+        const name = "ddd"
+        const groupId = 2
         await main();
-        const user = await prisma.$transaction([
-            prisma.user.update({
-                data: { name, introduction, email, image },
-                where: { id },
+        const room = await prisma.$transaction([
+            prisma.room.update({
+                data: { name: name, groupId: groupId },
+                where: { id }
             }),
         ]);
         return NextResponse.json(
-            { message: "success", user: user },
+            { message: "success", room: room },
             { status: 200 }
-        );
+        )
     } catch (e) {
         return NextResponse.json(
             { message: "error", e },
             { status: 500 }
-        );
+        )
     } finally {
         await prisma.$disconnect;
     }
@@ -55,15 +55,16 @@ export const PATCH = async (request: Request, context: { params: Params }) => {
 
 export const DELETE = async (request: Request, context: { params: Params }) => {
     try {
-        const id = String(context.params.id);
+        // const id = context.params.id;
+        const id = 1
         await main();
-        const user = await prisma.$transaction([
-            prisma.user.delete({
+        const room = await prisma.$transaction([
+            prisma.room.delete({
                 where: { id },
             }),
         ]);
         return NextResponse.json(
-            { message: "success", user},
+            { message: "success", room },
             { status: 200 }
         );
     } catch (e) {
