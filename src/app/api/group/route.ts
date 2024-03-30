@@ -4,7 +4,6 @@ import { stat, mkdir, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import _ from "lodash";
 import { PrismaClient } from "@prisma/client";
-import { revalidateTag } from "next/cache";
 
 const prisma = new PrismaClient();
 
