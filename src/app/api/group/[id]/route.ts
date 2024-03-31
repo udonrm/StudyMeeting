@@ -13,7 +13,7 @@ export const GET = async (request: Request, context: { params: Params }) => {
   try {
     const id = Number(context.params.id);
     await main();
-    const group = await prisma.group.findUnique({
+    const group = await prisma.group.findUniqueOrThrow({
       where: { id },
     });
     return NextResponse.json(
